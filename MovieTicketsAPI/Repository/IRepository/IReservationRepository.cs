@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace MovieTicketsAPI.Repository
+namespace MovieTicketsAPI.Repository.IRepository
 {
-    public interface IMyReservationRepository
+    public interface IReservationRepository
     {
-        Task<bool> CreateReservationAsync(MyReservation reservation);
+        Task<bool> CreateReservationAsync(Reservation reservation);
         Task DeleteReservationAsync(string id);
-        Task<IEnumerable<MyReservation>> GetAllReservations();
-        Task<MyReservation> GetReservationById(string id);
+        Task<IEnumerable<Reservation>> GetAllReservations();
+        Task<Reservation> GetReservationById(string id);
         Task<IEnumerable<ReservationResponse>> GetReservationsAsync(string customerName, string sort, int pageNumber, int pageSize);
         Task<object> GetReservationDetailAsync(string id);
-        Task UpdateReservationAsync(MyReservation reservation);
+        Task UpdateReservationAsync(Reservation reservation);
         Task<long> GetTotalCountAsync(string customerName);
     }
 }

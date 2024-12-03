@@ -21,6 +21,7 @@ import {
 import useStyles from "./HomeStyles";
 import Admin from "../Admin/Admin";
 import axios from "axios";
+import { axiosApiInstance as API } from '../../utils/axiosConfig';
 import { useRecoilState, useRecoilValue } from "recoil";
 import { moviesAtom, userAtom } from "../../atoms/atoms";
 
@@ -38,7 +39,7 @@ export default function Home() {
   const [debouncedValue, setDebouncedValue] = useState("");
   const [open, setOpen] = useState(false);
   const [theatreId, setTheatreId] = useState("");
-
+  const [genres, setGenres] = useState([]);
   const [theatres, setTheatres] = useState([]);
 
   const pages = new Array(numberOfPages).fill(null).map((v, i) => i);
@@ -61,7 +62,7 @@ export default function Home() {
         setLoading(false);
         alert(error);
       });
-  }, [setMovies, pageNumber, pageSize, sortBy, debouncedValue, theatreId]);
+  }, [setMovies, pageNumber, pageSize, sortBy, debouncedValue, theatreId,sortBy]);
 
   useEffect(() => {
     axios
@@ -74,6 +75,17 @@ export default function Home() {
         // setState({ error: "Failed to fetch theatres" });
       });
   }, []);
+
+  useEffect(() => {
+    API.get('genres')
+        .then((response) => {
+            setGenres(response.data);
+        })
+        .catch((error) => {
+            console.log(error);
+            // setState({ error: "Failed to fetch theatres" });
+        });
+}, []);
 
   const goToPrevious = () => {
     setPageNumber(Math.max(1, pageNumber - 1));
@@ -144,7 +156,7 @@ export default function Home() {
                   onChange={handleKeywordChange}
                 />
 
-                <FormControl className={classes.formControl}>
+                {/* <FormControl className={classes.formControl}>
                   <InputLabel id="theatreId-label">Theatre</InputLabel>
                   <Select
                     labelId="theatreId-label"
@@ -161,7 +173,7 @@ export default function Home() {
                       </MenuItem>
                     ))}
                   </Select>
-                </FormControl>
+                </FormControl> */}
 
                 <FormControl className={classes.formControl}>
                   <InputLabel shrink id="open-select-label">
@@ -220,7 +232,7 @@ export default function Home() {
                           </Typography>
                           <Box className={classes.chip}>
                             <Chip label={item.rating} color="primary" />
-                            <Chip label={item.genre} color="secondary" />
+                            <Chip label={genres.find((x) => x.id === item.genreId)?.name} color="secondary" />
                             <Chip label={item.duration} />
                           </Box>
                         </CardContent>

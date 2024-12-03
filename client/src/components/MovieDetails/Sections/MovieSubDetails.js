@@ -23,7 +23,7 @@ function Alert(props) {
 export default function FeaturedPost(props) {
   const classes = useStyles();
 
-  const { movieDetail } = props;
+  const { movieDetail ,scheduleDetail} = props;
 
   const [open, setOpen] = React.useState(false);
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
@@ -73,11 +73,16 @@ export default function FeaturedPost(props) {
                   Movie Information
                 </Typography>
                 <Typography variant="subtitle1">
-                  {movieDetail.language} / {movieDetail.genre} /{" "}
-                  {movieDetail.rating}
+                  {movieDetail.language}</Typography>
+                  <Typography variant="subtitle1">
+                     {movieDetail.genre}
+                  
                 </Typography>
                 <Typography variant="subtitle1">
-                  {movieDetail.duration}
+                <b>Rating</b> : {movieDetail.rating}
+                </Typography>
+                <Typography variant="subtitle1">
+                  <b>Duration</b> : {movieDetail.duration}
                 </Typography>
                 <Button variant="contained" color="primary">
                   Watch Trailer
@@ -100,7 +105,7 @@ export default function FeaturedPost(props) {
           </Card>
         </CardActionArea>
       </Grid>
-      <Grid item xs={12} md={6}>
+      {/* <Grid item xs={12} md={6}>
         <Card className={classes.card}>
           <div className={classes.cardDetails}>
             <CardContent>
@@ -143,7 +148,7 @@ export default function FeaturedPost(props) {
             </CardContent>
           </div>
         </Card>
-      </Grid>
+      </Grid> */}
     </Grid>
   );
 }

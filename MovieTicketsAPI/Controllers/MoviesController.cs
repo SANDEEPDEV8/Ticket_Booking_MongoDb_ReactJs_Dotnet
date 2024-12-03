@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using MongoDB.Driver;
 using MovieTicketsAPI.Data;
 using MovieTicketsAPI.Models;
-using MovieTicketsAPI.Repository;
 using MovieTicketsAPI.Repository.IRepository;
 using System;
 using System.Collections.Generic;
@@ -19,12 +18,10 @@ namespace MovieTicketsAPI.Controllers
     [ApiController]
     public class MoviesController : ControllerBase
     {
-        private MovieDbContext _dbContext;
-        private readonly IMyMovieRepository _myMovieRepository;
+        private readonly IMovieRepository _myMovieRepository;
 
-        public MoviesController(MovieDbContext dbContext, IMyMovieRepository myMovieRepository)
+        public MoviesController( IMovieRepository myMovieRepository)
         {
-            _dbContext = dbContext;
             _myMovieRepository = myMovieRepository;
         }
 
@@ -47,7 +44,7 @@ namespace MovieTicketsAPI.Controllers
                     Duration = movie.Duration,
                     Language = movie.Language,
                     Rating = movie.Rating,
-                    Genre = movie.Genre,
+                    GenreId = movie.GenreId,
                     ImageUrl = movie.ImageUrl,
                     TotalPages = TotalPages,
                 });
@@ -80,7 +77,7 @@ namespace MovieTicketsAPI.Controllers
                 Duration = m.Duration,
                 Language = m.Language,
                 Rating = m.Rating,
-                Genre = m.Genre,
+                Genre = m.GenreId,
                 ImageUrl = m.ImageUrl
             });
             return Ok(movies);  
@@ -88,7 +85,7 @@ namespace MovieTicketsAPI.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> Post([FromForm] MyMovie movieObj)
+        public async Task<IActionResult> Post([FromForm] Movie movieObj)
         {
             var guid = Guid.NewGuid();
             var filePath = Path.Combine("wwwroot", guid + ".jpg");
@@ -104,9 +101,9 @@ namespace MovieTicketsAPI.Controllers
             return StatusCode(StatusCodes.Status201Created);
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(string id, [FromForm] MyMovie movieObj)
+        public async Task<IActionResult> Put(string id, [FromForm] Movie movieObj)
         {
             //var movie = _dbContext.Movies.Find(id);
             var movie = await _myMovieRepository.GetMovie(id);
@@ -127,21 +124,21 @@ namespace MovieTicketsAPI.Controllers
 
                 movie.Name = movieObj.Name;
                 movie.Description = movieObj.Description;
-                movie.TheatreId = movieObj.TheatreId;
+                //movie.TheatreId = movieObj.TheatreId;
                 movie.Language = movieObj.Language;
                 movie.Duration = movieObj.Duration;
-                movie.PlayingDate = movieObj.PlayingDate;
-                movie.PlayingTime = movie.PlayingTime;
+                //movie.PlayingDate = movieObj.PlayingDate;
+                //movie.PlayingTime = movie.PlayingTime;
                 movie.Rating = movieObj.Rating;
-                movie.Genre = movieObj.Genre;
+                movie.GenreId = movieObj.GenreId;
                 movie.TrailorUrl = movieObj.TrailorUrl;
-                movie.TicketPrice = movieObj.TicketPrice;
+                //movie.TicketPrice = movieObj.TicketPrice;
                 await _myMovieRepository.UpdateMovie(id, movie);
                 return Ok("Successfully updated data");
             }
         }
 
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {

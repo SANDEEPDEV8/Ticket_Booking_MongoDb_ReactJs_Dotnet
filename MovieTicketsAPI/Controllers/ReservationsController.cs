@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MovieTicketsAPI.Data;
 using MovieTicketsAPI.Models;
-using MovieTicketsAPI.Repository;
+using MovieTicketsAPI.Repository.IRepository;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,18 +14,16 @@ namespace MovieTicketsAPI.Controllers
     [ApiController]
     public class ReservationsController : ControllerBase
     {
-        private MovieDbContext _dbContext;
-        private readonly IMyReservationRepository _myReservationRepository;
+        private readonly IReservationRepository _myReservationRepository;
 
-        public ReservationsController(MovieDbContext dbContext, IMyReservationRepository myReservationRepository)
+        public ReservationsController( IReservationRepository myReservationRepository)
         {
-            _dbContext = dbContext;
             _myReservationRepository = myReservationRepository;
         }
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody]MyReservation reservationObj)
+        public async Task<IActionResult> Post([FromBody]Reservation reservationObj)
         {
 
             reservationObj.ReservationTime = DateTime.Now;

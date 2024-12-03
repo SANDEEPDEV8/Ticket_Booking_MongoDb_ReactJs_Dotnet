@@ -3,7 +3,7 @@ using MongoDB.Bson;
 
 namespace MovieTicketsAPI.Models
 {
-    public class MyUser
+    public class Genre
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
@@ -11,14 +11,5 @@ namespace MovieTicketsAPI.Models
 
         [BsonElement("name")]
         public string Name { get; set; }
-
-        [BsonElement("email")]
-        public string Email { get; set; }
-
-        [BsonElement("password")]
-        public string Password { get; set; }
-
-        [BsonElement("role")]
-        public string Role { get; set; }
     }
 }

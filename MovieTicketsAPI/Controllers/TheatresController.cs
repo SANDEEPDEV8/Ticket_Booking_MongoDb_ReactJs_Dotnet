@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using MovieTicketsAPI.Models;
+using MovieTicketsAPI.Repository.IRepository;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MovieTicketsAPI.Repository;
-using MovieTicketsAPI.Models;
 
 namespace MovieTicketsAPI.Controllers
 {
@@ -17,57 +19,91 @@ namespace MovieTicketsAPI.Controllers
             _theatreRepository = theatreRepository;
         }
 
-        // GET: api/<TheatreController>
+        // GET: api/Theatres
         [HttpGet]
-        public async Task<IEnumerable<Theatre>> Get()
+        public async Task<IActionResult> GetAllTheatres()
         {
-            return await _theatreRepository.GetAllTheatresAsync();
+            var theatres = await _theatreRepository.GetAllTheatres();
+            return Ok(theatres);
         }
 
-        // GET api/<TheatreController>/5
+        // GET: api/Theatres/{id}
         [HttpGet("{id}")]
-        public async Task<ActionResult<Theatre>> Get(string id)
+        public async Task<IActionResult> GetTheatreById(string id)
         {
-            var theatre = await _theatreRepository.GetTheatreByIdAsync(id);
+            var theatre = await _theatreRepository.GetTheatreById(id);
             if (theatre == null)
             {
                 return NotFound();
             }
-            return theatre;
+            return Ok(theatre);
         }
 
-        // POST api/<TheatreController>
+        // POST: api/Theatres
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] Theatre theatre)
+        public async Task<IActionResult> CreateTheatre([FromBody] Theatre theatre)
         {
-            await _theatreRepository.CreateTheatreAsync(theatre);
-            return CreatedAtAction(nameof(Get), new { id = theatre.Id }, theatre);
+            if (theatre == null || theatre.ScreenNumber <= 0 || theatre.SeatCapacity <= 0 || string.IsNullOrEmpty(theatre.Location))
+            {
+                return BadRequest("Invalid theatre data.");
+            }
+
+            try
+            {
+                await _theatreRepository.CreateTheatre(theatre);
+                return StatusCode(StatusCodes.Status201Created, theatre);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error creating theatre: {ex.Message}");
+            }
         }
 
-        // PUT api/<TheatreController>/5
+        // PUT: api/Theatres/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(string id, [FromBody] Theatre updatedTheatre)
+        public async Task<IActionResult> UpdateTheatre(string id, [FromBody] Theatre theatre)
         {
-            var theatre = await _theatreRepository.GetTheatreByIdAsync(id);
-            if (theatre == null)
+            if (theatre == null || theatre.Id != id)
+            {
+                return BadRequest("Invalid theatre data.");
+            }
+
+            var existingTheatre = await _theatreRepository.GetTheatreById(id);
+            if (existingTheatre == null)
             {
                 return NotFound();
             }
-            await _theatreRepository.UpdateTheatreAsync(id, updatedTheatre);
-            return NoContent();
+
+            try
+            {
+                await _theatreRepository.UpdateTheatre(id, theatre);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error updating theatre: {ex.Message}");
+            }
         }
 
-        // DELETE api/<TheatreController>/5
+        // DELETE: api/Theatres/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> DeleteTheatre(string id)
         {
-            var theatre = await _theatreRepository.GetTheatreByIdAsync(id);
-            if (theatre == null)
+            var existingTheatre = await _theatreRepository.GetTheatreById(id);
+            if (existingTheatre == null)
             {
                 return NotFound();
             }
-            await _theatreRepository.DeleteTheatreAsync(id);
-            return NoContent();
+
+            try
+            {
+                await _theatreRepository.DeleteTheatre(id);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error deleting theatre: {ex.Message}");
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using MongoDB.Driver;
 using MovieTicketsAPI.Data;
 using MovieTicketsAPI.Models;
+using MovieTicketsAPI.Repository.IRepository;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,39 +9,36 @@ namespace MovieTicketsAPI.Repository
 {
     public class TheatreRepository : ITheatreRepository
     {
-        private MongoDbContext _context;
+        private readonly MongoDbContext _context;
+
         public TheatreRepository(MongoDbContext dbContext)
         {
             _context = dbContext;
         }
 
-        // Create
-        public async Task CreateTheatreAsync(Theatre theatre)
+        public async Task<IEnumerable<Theatre>> GetAllTheatres()
+        {
+            return await _context.Theatres.Find(theatre => true).ToListAsync();
+        }
+
+        public async Task<Theatre> GetTheatreById(string id)
+        {
+            return await _context.Theatres.Find(theatre => theatre.Id == id).FirstOrDefaultAsync();
+        }
+
+        public async Task CreateTheatre(Theatre theatre)
         {
             await _context.Theatres.InsertOneAsync(theatre);
         }
 
-        // Read
-        public async Task<Theatre> GetTheatreByIdAsync(string id)
+        public async Task UpdateTheatre(string id, Theatre theatre)
         {
-            return await _context.Theatres.Find(t => t.Id == id).FirstOrDefaultAsync();
+            await _context.Theatres.ReplaceOneAsync(t => t.Id == id, theatre);
         }
 
-        public async Task<List<Theatre>> GetAllTheatresAsync()
+        public async Task DeleteTheatre(string id)
         {
-            return await _context.Theatres.Find(t => true).ToListAsync();
-        }
-
-        // Update
-        public async Task UpdateTheatreAsync(string id, Theatre updatedTheatre)
-        {
-            await _context.Theatres.ReplaceOneAsync(t => t.Id == id, updatedTheatre);
-        }
-
-        // Delete
-        public async Task DeleteTheatreAsync(string id)
-        {
-            await _context.Theatres.DeleteOneAsync(t => t.Id == id);
+            await _context.Theatres.DeleteOneAsync(theatre => theatre.Id == id);
         }
     }
 }

@@ -1,29 +1,44 @@
 ﻿using Microsoft.AspNetCore.Http;
-using System;
+using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
+using System;
 
 namespace MovieTicketsAPI.Models
 {
     public class Movie
     {
-        public int Id { get; set; }
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; } // MongoDB uses string ObjectId
+        [BsonElement("name")]
         public string Name { get; set; }
+
+        [BsonElement("description")]
         public string Description { get; set; }
+        //public string TheatreId { get; set; }
+
+        [BsonElement("language")]
         public string Language { get; set; }
-        public string Duration { get; set; }
-        public DateTime PlayingDate { get; set; }
-        public DateTime PlayingTime { get; set; }
-        public double TicketPrice { get; set; }
+
+        [BsonElement("duration")]
+        public double Duration { get; set; }
+        //public DateTime PlayingDate { get; set; }
+        //public DateTime PlayingTime { get; set; }
+        //public double TicketPrice { get; set; }
+
+        [BsonElement("rating")]
         public double Rating { get; set; }
-        public string Genre { get; set; }
+
+        [BsonElement("genreId")]
+        public string GenreId { get; set; }
+
+        [BsonElement("trailorUrl")]
         public string TrailorUrl { get; set; }
+
+        [BsonElement("imageUrl")]
         public string ImageUrl { get; set; }
-        [NotMapped]
+        [BsonIgnore] // Ignore this property in MongoDB
         public IFormFile Image { get; set; }
-        public ICollection<Reservation> Reservations { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using MovieTicketsAPI.Data;
 using MovieTicketsAPI.Models;
+using MovieTicketsAPI.Repository.IRepository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,26 +11,26 @@ using System.Threading.Tasks;
 
 namespace MovieTicketsAPI.Repository
 {
-    public class MyReservationRepository : IMyReservationRepository
+    public class ReservationRepository : IReservationRepository
     {
         private MongoDbContext _context;
-        public MyReservationRepository(MongoDbContext dbContext)
+        public ReservationRepository(MongoDbContext dbContext)
         {
             _context = dbContext;
         }
 
-        public async Task<IEnumerable<MyReservation>> GetAllReservations()
+        public async Task<IEnumerable<Reservation>> GetAllReservations()
         {
             return await _context.Reservations.Find(reservation => true).ToListAsync();
         }
 
 
-        public async Task<MyReservation> GetReservationById(string id)
+        public async Task<Reservation> GetReservationById(string id)
         {
             return await _context.Reservations.Find(reservation => reservation.Id == id).FirstOrDefaultAsync();
         }
 
-        public async Task<IEnumerable<MyReservation>> GetReservationsById(string userId)
+        public async Task<IEnumerable<Reservation>> GetReservationsById(string userId)
         {
             return await _context.Reservations.Find(reservation => reservation.UserId == userId).ToListAsync();
         }
@@ -37,8 +38,8 @@ namespace MovieTicketsAPI.Repository
 
         public async Task<IEnumerable<ReservationResponse>> GetReservationsAsync(string customerName, string sort, int pageNumber, int pageSize)
         {
-            var sortDefinitionBuilder = Builders<MyReservation>.Sort;
-            SortDefinition<MyReservation> sortDefinition;
+            var sortDefinitionBuilder = Builders<Reservation>.Sort;
+            SortDefinition<Reservation> sortDefinition;
             switch (sort)
             {
                 case "highest_price":
@@ -60,12 +61,12 @@ namespace MovieTicketsAPI.Repository
 
             //var filter = Builders<MyReservation>.Filter.Regex("Name", new MongoDB.Bson.BsonRegularExpression($"^{customerName}", "i"));
 
-            var filter = Builders<MyUser>.Filter.Regex("Name", new MongoDB.Bson.BsonRegularExpression(customerName, "i"));
+            var filter = Builders<User>.Filter.Regex("Name", new MongoDB.Bson.BsonRegularExpression(customerName, "i"));
             var users = await _context.Users.Find(x => filter.Inject()).ToListAsync();
             var userIds = users.Select(u => u.Id).ToList();
 
             // get the corresponding reservations of this users with pagination
-            var reservationFilter = Builders<MyReservation>.Filter.In(r => r.UserId, userIds);
+            var reservationFilter = Builders<Reservation>.Filter.In(r => r.UserId, userIds);
             var reservations = await _context.Reservations.Find(reservationFilter)
                                         .Sort(sortDefinition)
                                         .Skip((pageNumber - 1) * pageSize)
@@ -75,7 +76,7 @@ namespace MovieTicketsAPI.Repository
 
             // get the corresponding movies of this reservations
             var movieIds = reservations.Select(r => r.MovieId).ToList();
-            var movieFilter = Builders<MyMovie>.Filter.In(m => m.Id, movieIds);
+            var movieFilter = Builders<Movie>.Filter.In(m => m.Id, movieIds);
             var movies = await _context.Movies.Find(movieFilter).ToListAsync();
 
 
@@ -130,8 +131,8 @@ namespace MovieTicketsAPI.Repository
                 Qty = reservation.Qty,
                 Price = reservation.Price,
                 Phone = reservation.Phone,
-                PlayingDate = movie.PlayingDate,
-                PlayingTime = movie.PlayingTime
+                //PlayingDate = movie.PlayingDate,
+                //PlayingTime = movie.PlayingTime
             };
         }
 
@@ -150,7 +151,7 @@ namespace MovieTicketsAPI.Repository
             return fullSet.Min();
         }
 
-        public async Task<bool> CreateReservationAsync(MyReservation reservation)
+        public async Task<bool> CreateReservationAsync(Reservation reservation)
         {
             var userReservations = await GetReservationsById(reservation.UserId);
             var filledSeats = userReservations.Select(x => x.SeatNo).ToList();
@@ -168,7 +169,7 @@ namespace MovieTicketsAPI.Repository
             return true;
         }
 
-        public async Task UpdateReservationAsync(MyReservation reservation)
+        public async Task UpdateReservationAsync(Reservation reservation)
         {
             await _context.Reservations.ReplaceOneAsync(r => r.Id == reservation.Id, reservation);
         }
@@ -180,11 +181,11 @@ namespace MovieTicketsAPI.Repository
 
         public async Task<long> GetTotalCountAsync(string customerName)
         {
-            var filter = Builders<MyUser>.Filter.Regex("Name", new MongoDB.Bson.BsonRegularExpression(customerName, "i"));
+            var filter = Builders<User>.Filter.Regex("Name", new MongoDB.Bson.BsonRegularExpression(customerName, "i"));
             var users = await _context.Users.Find(x => filter.Inject()).ToListAsync();
             var userIds = users.Select(u => u.Id).ToList();
 
-            var reservationFilter = Builders<MyReservation>.Filter.In(r => r.UserId, userIds);
+            var reservationFilter = Builders<Reservation>.Filter.In(r => r.UserId, userIds);
             var count = await _context.Reservations.CountDocumentsAsync(reservationFilter);
 
             return (long)count;

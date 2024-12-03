@@ -49,7 +49,7 @@ namespace MovieTicketsAPI
             });
             services.AddControllers();
             services.AddMvc().AddXmlSerializerFormatters();
-            services.AddDbContext<MovieDbContext>(option => option.UseSqlServer(Configuration.GetConnectionString("MovieDbConnection")));
+            //services.AddDbContext<MovieDbContext>(option => option.UseSqlServer(Configuration.GetConnectionString("MovieDbConnection")));
             //services.AddDbContext<MovieDbContext>(option => option.UseSqlServer(Configuration.GetConnectionString(connection)));
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddJwtBearer(options =>
@@ -66,13 +66,17 @@ namespace MovieTicketsAPI
                             ClockSkew = TimeSpan.Zero,
                         };
                     });
-            services.AddScoped<IMovieRepository, MovieRepository>();
+            //services.AddScoped<IMovieRepository, MovieRepository>();
 
             services.AddSingleton<MongoDbContext>();
-            services.AddScoped<IMyUserRepository, MyUserRepository>();
-            services.AddScoped<IMyMovieRepository, MyMovieRepository>();
-            services.AddScoped<IMyReservationRepository, MyReservationRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IMovieRepository, MovieRepository>();
+            services.AddScoped<IGenreRepository, GenreRepository>();
+            services.AddScoped<IReservationRepository, ReservationRepository>();
             services.AddScoped<ITheatreRepository, TheatreRepository>();
+            services.AddScoped<ITimeslotRepository, TimeslotRepository>();
+            services.AddScoped<IScheduleRepository, ScheduleRepository>();
+            services.AddScoped<IBookingRepository, BookingRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
