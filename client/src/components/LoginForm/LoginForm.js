@@ -230,6 +230,7 @@ export default function LoginForm() {
             color="primary"
             className={classes.submit}
             disabled={!isFormValid()}
+            style={{color: "white"}}
           >
             Log in
           </Button>
