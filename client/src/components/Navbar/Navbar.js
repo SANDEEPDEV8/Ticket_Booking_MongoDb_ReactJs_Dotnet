@@ -48,7 +48,7 @@ const Navbar = () => {
             <Container maxWidth="md" className={classes.navbarDisplayFlex}>
               <IconButton edge="start" aria-label="home">
                 <a href="/" style={{ color: "white", textDecoration: "none" }}>
-                  <Typography variant="h6">Book Tickets | Movie </Typography>
+                  <Typography variant="h6">Movie Tickets Booking </Typography>
                 </a>
               </IconButton>
 

@@ -275,7 +275,7 @@ export default function MovieList() {
                                                     <Box className={classes.chip}>
                                                         <Chip label={item.rating} color="primary" />
                                                         <Chip label={genres.find((x) => x.id === item.genreId)?.name} color="secondary" />
-                                                        <Chip label={item.duration} />
+                                                        <Chip label={item.duration} /> 
                                                     </Box>
                                                     <Box display="flex" justifyContent="space-around">
                                                         <Button color="primary" id={item.id} onClick={handleEditDialogOpen}>

@@ -233,7 +233,7 @@ export default function Home() {
                           <Box className={classes.chip}>
                             <Chip label={item.rating} color="primary" />
                             <Chip label={genres.find((x) => x.id === item.genreId)?.name} color="secondary" />
-                            <Chip label={item.duration} />
+                            <Chip label={item.duration + " hr"} />
                           </Box>
                         </CardContent>
                       </Card>
