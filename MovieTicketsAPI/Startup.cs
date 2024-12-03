@@ -77,6 +77,7 @@ namespace MovieTicketsAPI
             services.AddScoped<ITimeslotRepository, TimeslotRepository>();
             services.AddScoped<IScheduleRepository, ScheduleRepository>();
             services.AddScoped<IBookingRepository, BookingRepository>();
+            services.AddScoped<IPaymentRepository, PaymentRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

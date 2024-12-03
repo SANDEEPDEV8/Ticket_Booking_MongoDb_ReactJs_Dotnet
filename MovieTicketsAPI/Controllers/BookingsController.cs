@@ -21,13 +21,15 @@ namespace MovieTicketsAPI.Controllers
         private readonly ITimeslotRepository _timeslotRepository;
         private readonly IMovieRepository _myMovieRepository;
         private readonly ITheatreRepository _theatreRepository;
+        private readonly IPaymentRepository _paymentRepository;
 
         public BookingsController(IBookingRepository bookingRepository,
             IUserRepository myUserRepository,
             IScheduleRepository scheduleRepository,
             ITimeslotRepository timeslotRepository,
             IMovieRepository myMovieRepository,
-            ITheatreRepository theatreRepository
+            ITheatreRepository theatreRepository,
+            IPaymentRepository paymentRepository
             )
         {
             _bookingRepository = bookingRepository;
@@ -36,6 +38,7 @@ namespace MovieTicketsAPI.Controllers
             _timeslotRepository = timeslotRepository;
             _myMovieRepository = myMovieRepository;
             _theatreRepository = theatreRepository;
+            _paymentRepository = paymentRepository;
         }
 
         // GET: api/Bookings
@@ -214,6 +217,17 @@ namespace MovieTicketsAPI.Controllers
                 booking.TotalPrice = booking.NumberOfSeats * schedule.Price;
 
                 await _bookingRepository.CreateBooking(booking);
+                var payment = new Payment
+                {
+                    BookingId = booking.Id,
+                    Amount = booking.TotalPrice,
+                    PaymentDate = DateTime.Now,
+                    PaymentMethod = "CARD" // Default payment method; you can modify or make it dynamic as needed
+                };
+
+                await _paymentRepository.CreatePayment(payment);
+
+
                 return StatusCode(StatusCodes.Status201Created, booking);
             }
             catch (Exception ex)
