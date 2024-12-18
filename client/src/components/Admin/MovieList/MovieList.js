@@ -48,6 +48,9 @@ export default function MovieList() {
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [deleteSnackbarOpen, setDeleteSnackbarOpen] = useState(false);
 
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+
     const [genres, setGenres] = useState([]);
 
     const pages = new Array(numberOfPages).fill(null).map((v, i) => i);
@@ -60,7 +63,7 @@ export default function MovieList() {
             setLoading(true);
 
             axios
-                .get(`${baseURL}movies?pageNumber=${pageNumber}&pageSize=${pageSize}&sort=${sortBy}&keyword=${debouncedValue}&theatreId=${theatreId}`)
+                .get(`${baseURL}movies?pageNumber=${pageNumber}&pageSize=${pageSize}&sort=${sortBy}&keyword=${debouncedValue}&theatreId=${theatreId}&startDate=${startDate}&endDate=${endDate}`)
                 .then((response) => {
                     if (response.status === 200) {
                         setMovies(response.data);
@@ -73,7 +76,7 @@ export default function MovieList() {
                     alert(error);
                 });
         }
-    }, [setMovies, pageNumber, pageSize, sortBy, user.role, debouncedValue, theatreId, dialogOpen, editDialogOpen]);
+    }, [setMovies, pageNumber, pageSize, sortBy, user.role, debouncedValue, theatreId, dialogOpen, editDialogOpen, startDate, endDate]);
 
     useEffect(() => {
         API.get('genres')
@@ -127,6 +130,14 @@ export default function MovieList() {
 
     const handleSnackbarOpen = () => {
         setSnackbarOpen(true);
+    };
+
+    const handleStartDateChange = (event) => {
+        setStartDate(event.target.value);
+    };
+
+    const handleEndDateChange = (event) => {
+        setEndDate(event.target.value);
     };
 
     const handleSnackbarClose = (event, reason) => {
@@ -235,6 +246,26 @@ export default function MovieList() {
                                         ))}
                                     </Select>
                                 </FormControl> */}
+                                <TextField
+                                    variant="outlined"
+                                    label="Start Date"
+                                    type="date"
+                                    value={startDate}
+                                    onChange={handleStartDateChange}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                />
+                                <TextField
+                                    variant="outlined"
+                                    label="End Date"
+                                    type="date"
+                                    value={endDate}
+                                    onChange={handleEndDateChange}
+                                    InputLabelProps={{
+                                        shrink: true,
+                                    }}
+                                />
 
                                 <FormControl className={classes.formControl}>
                                     <InputLabel shrink id="open-select-label">

@@ -20,5 +20,8 @@ namespace MovieTicketsAPI.Models
 
         [BsonElement("seatCapacity")]
         public int SeatCapacity { get; set; }
+
+        [BsonElement("price")]
+        public int Price { get; set; }
     }
 }

@@ -74,10 +74,16 @@ namespace MovieTicketsAPI.Controllers
             }
             var userObj = new User
             {
-                Name = user.Name,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                DateOfBirth = user.DateOfBirth,
                 Email = user.Email,
                 Password = SecurePasswordHasherHelper.Hash(user.Password),
-                Role = "Users"
+                Role = "Users",
+                City = user.City,
+                State = user.State,
+                ZipCode = user.ZipCode,
+                PhoneNumber = user.PhoneNumber
             };
 
             await _myUserRepository.CreateUser(userObj);

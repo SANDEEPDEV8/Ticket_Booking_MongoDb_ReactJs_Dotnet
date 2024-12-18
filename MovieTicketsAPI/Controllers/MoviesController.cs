@@ -26,7 +26,10 @@ namespace MovieTicketsAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllMovies(string sort, string keyword, int? pageNumber, int? pageSize, string theatreId)
+        public async Task<IActionResult> GetAllMovies(string sort, string keyword, int? pageNumber, int? pageSize, 
+            string theatreId,
+            DateTime? startDate = null,
+            DateTime? endDate = null)
         {
             var currentPageNumber = pageNumber ?? 1;
             var currentPageSize = pageSize ?? 100;
@@ -35,7 +38,13 @@ namespace MovieTicketsAPI.Controllers
 
             var TotalCount = await _myMovieRepository.GetCount();// _dbContext.Movies.Where(q => q.Name.Contains(movieName)).Count();
             var TotalPages = Math.Ceiling(((decimal)TotalCount / (decimal)currentPageSize));
-            var movies = await _myMovieRepository.GetAllPaginatedMovies(currentPageNumber, currentPageSize, sort, keyword, theatreId);
+
+            (DateTime? startDate, DateTime? endDate)? dateRange = null;
+            if (startDate.HasValue && endDate.HasValue)
+            {
+                dateRange = (startDate, endDate);
+            }
+            var movies = await _myMovieRepository.GetAllPaginatedMovies(currentPageNumber, currentPageSize, sort, keyword, theatreId, dateRange);
             var moviesData = movies.Select(movie =>
                 new
                 {

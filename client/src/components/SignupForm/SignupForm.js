@@ -24,7 +24,13 @@ export default function SignupForm() {
   const [state, setState] = useReducer(
     (state, newState) => ({ ...state, ...newState }),
     {
-      name: "",
+      firstName: "",
+      lastName: "",
+      dob: "",
+      city: "",
+      stateStr: "",
+      zipCode: "",
+      phoneNumber: "",
       email: "",
       password: "",
       isLoading: false,
@@ -33,7 +39,17 @@ export default function SignupForm() {
   );
 
   const isFormValid = () => {
-    return state.name && state.email && state.password;
+    return (
+      state.firstName &&
+      state.lastName &&
+      state.dob &&
+      state.city &&
+      state.stateStr &&
+      state.zipCode &&
+      state.phoneNumber &&
+      state.email &&
+      state.password
+    );
   };
 
   const handleChange = (event) => {
@@ -46,10 +62,26 @@ export default function SignupForm() {
 
     const baseURL = "https://localhost:5001/api/";
 
-    const { name, email, password } = state;
+    const {
+      firstName,
+      lastName,
+      dob,
+      city,
+      stateStr,
+      zipCode,
+      phoneNumber,
+      email,
+      password,
+    } = state;
 
     let body = {
-      name,
+      firstName,
+      lastName,
+      dob,
+      city,
+      "state":stateStr,
+      zipCode,
+      phoneNumber,
       email,
       password,
     };
@@ -86,17 +118,97 @@ export default function SignupForm() {
         )}
         <form className={classes.form} noValidate onSubmit={handleSubmit}>
           <Grid container spacing={2}>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="firstName"
+                label="First Name"
+                name="firstName"
+                autoComplete="given-name"
+                value={state.firstName}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="lastName"
+                label="Last Name"
+                name="lastName"
+                autoComplete="family-name"
+                value={state.lastName}
+                onChange={handleChange}
+              />
+            </Grid>
             <Grid item xs={12}>
               <TextField
                 variant="outlined"
                 required
                 fullWidth
-                id="name"
-                label="Full Name"
-                name="name"
-                autoComplete="name"
-                autoFocus
-                value={state.name}
+                id="dob"
+                label="Date of Birth"
+                name="dob"
+                type="date"
+                InputLabelProps={{
+                  shrink: true,
+                }}
+                value={state.dob}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="city"
+                label="City"
+                name="city"
+                autoComplete="address-level2"
+                value={state.city}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="stateStr"
+                label="state"
+                name="stateStr"
+                autoComplete="address-level1"
+                value={state.stateStr}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="zipCode"
+                label="Zip Code"
+                name="zipCode"
+                autoComplete="postal-code"
+                value={state.zipCode}
+                onChange={handleChange}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="phoneNumber"
+                label="Phone Number"
+                name="phoneNumber"
+                autoComplete="tel"
+                value={state.phoneNumber}
                 onChange={handleChange}
               />
             </Grid>

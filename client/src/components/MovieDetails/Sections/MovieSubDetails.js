@@ -21,9 +21,10 @@ function Alert(props) {
 }
 
 export default function FeaturedPost(props) {
+  console.log(props);
   const classes = useStyles();
 
-  const { movieDetail ,scheduleDetail} = props;
+  const { movieDetail ,schedules} = props;
 
   const [open, setOpen] = React.useState(false);
   const [snackbarOpen, setSnackbarOpen] = React.useState(false);
@@ -78,12 +79,25 @@ export default function FeaturedPost(props) {
                      {movieDetail.genre}
                   
                 </Typography>
+                
+
                 <Typography variant="subtitle1">
                 <b>Rating</b> : {movieDetail.rating}
                 </Typography>
                 <Typography variant="subtitle1">
                   <b>Duration</b> : {movieDetail.duration}
                 </Typography>
+                <Typography variant="subtitle1">
+                  <b>Booked Seats</b> :{" "}
+                  {schedules.reduce((acc, curr) => acc + curr.seatsBooked, 0)}
+                </Typography>
+                <Typography variant="subtitle1">
+                  <b>Available Seats</b> :{" "}
+                  {schedules.reduce((acc, curr) => acc + curr.seatsAvailable, 0)}
+                </Typography>
+
+
+
                 <Button variant="contained" color="primary">
                   Watch Trailer
                 </Button>

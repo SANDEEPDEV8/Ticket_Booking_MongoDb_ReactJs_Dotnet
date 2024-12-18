@@ -20,6 +20,8 @@ export default function MovieForm(props) {
         // ticketPrice: 0,
         rating: 0,
         genre: '',
+        actorName: '',
+        directorName: '',
         trailorUrl: '',
         image: '',
         isLoading: false,
@@ -37,6 +39,8 @@ export default function MovieForm(props) {
         // ticketPrice,
         rating,
         genre,
+        actorName,
+        directorName,
         trailorUrl,
         image,
         error,
@@ -44,7 +48,8 @@ export default function MovieForm(props) {
     } = state;
 
     const isFormValid = () => {
-        console.log({ name, description, genreId, language, duration, rating, genre, trailorUrl, image });
+        console.log({ name, description, genreId, language, duration, rating, genre, actorName,
+            directorName, trailorUrl, image });
         console.log(
             name &&
                 description &&
@@ -55,7 +60,9 @@ export default function MovieForm(props) {
                 // playingTime &&
                 // ticketPrice &&
                 rating &&
-                // genre &&
+                 genre &&
+                actorName,
+        directorName,
                 trailorUrl &&
                 image
         );
@@ -69,7 +76,9 @@ export default function MovieForm(props) {
             // playingTime &&
             // ticketPrice &&
             rating &&
-            // genre &&
+            genre &&
+            actorName,
+        directorName,
             trailorUrl &&
             image
         );
@@ -113,6 +122,8 @@ export default function MovieForm(props) {
         // formData.append("TicketPrice", ticketPrice);
         formData.append('Rating', rating);
         formData.append('Genre', genre);
+        formData.append('ActorName', actorName);
+        formData.append('DirectorName', directorName);
         formData.append('TrailorUrl', trailorUrl);
         formData.append('Image', image, image.name);
 
@@ -217,9 +228,46 @@ export default function MovieForm(props) {
                             <TextField variant="outlined" margin="normal" required fullWidth id="ticketPrice" label="Ticket Price" type="number" name="ticketPrice" value={ticketPrice} onChange={handleChange} placeholder="Ex) 12.99" />
                         </Grid> */}
 
-                        <Grid item xs={6} sm={6}>
+                        {/* <Grid item xs={6} sm={6}>
                             <TextField variant="outlined" margin="normal" required fullWidth id="rating" label="Rating" type="number" name="rating" value={rating} onChange={handleChange} placeholder="Ex) 8.8" />
+                        </Grid> */}
+
+                        <Grid item xs={6} sm={6}>
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            select
+                            id="rating"
+                            label="Rating"
+                            name="rating"
+                            value={rating}
+                            onChange={handleChange}
+                            SelectProps={{
+                            native: true,
+                            }}
+                        >
+                            {/* <option value="" disabled>
+                            Select a Rating
+                            </option> */}
+                            <option value="G">G (General Audiences)</option>
+                            <option value="PG">PG (Parental Guidance Suggested)</option>
+                            <option value="PG-13">PG-13 (Parents Strongly Cautioned)</option>
+                            <option value="R">R (Restricted)</option>
+                            <option value="NC-17">NC-17 (Adults Only)</option>
+                        </TextField>
                         </Grid>
+
+                        {/* add actorname and director name fields*/}
+                       <Grid item xs={6} sm={6}>
+                            <TextField variant="outlined" margin="normal" required fullWidth id="actorName" label="Actor Name" type="text" name="actorName" value={actorName} onChange={handleChange} />
+
+                        </Grid>
+                        <Grid item xs={6} sm={6}>
+                            <TextField variant="outlined" margin="normal" required fullWidth id="directorName" label="Director Name" type="text" name="directorName" value={directorName} onChange={handleChange} />
+                        </Grid>
+                        
 
                         <Grid item xs={12}>
                             <TextField variant="outlined" margin="normal" required fullWidth id="trailorUrl" label="Trailor URL" type="text" name="trailorUrl" value={trailorUrl} onChange={handleChange} />

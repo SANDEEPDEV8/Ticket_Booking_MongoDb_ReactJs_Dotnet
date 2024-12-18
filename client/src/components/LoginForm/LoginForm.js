@@ -244,7 +244,7 @@ export default function LoginForm() {
           </Grid>
         </form>
 
-        {/* <form className={classes.form} noValidate onSubmit={handleAdminSubmit}>
+        <form className={classes.form} noValidate onSubmit={handleAdminSubmit}>
           <Button
             type="submit"
             fullWidth
@@ -266,7 +266,7 @@ export default function LoginForm() {
           >
             Demo Log in as User
           </Button>
-        </form> */}
+        </form> 
       </div>
       <Backdrop className={classes.backdrop} open={state.isLoading}>
         <CircularProgress color="inherit" />

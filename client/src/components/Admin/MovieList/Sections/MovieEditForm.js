@@ -21,6 +21,8 @@ export default function MovieEditForm(props) {
                     ticketPrice: response.data.ticketPrice,
                     rating: response.data.rating,
                     genreId: response.data.genreId,
+                    actorName: response.data.actorName,
+                    directorName: response.data.directorName,
                     trailorUrl: response.data.trailorUrl,
                 });
             }
@@ -38,17 +40,19 @@ export default function MovieEditForm(props) {
         ticketPrice: 0,
         rating: 0,
         genreId: '',
+        actorName: '',
+        directorName: '',
         trailorUrl: '',
         image: '',
         isLoading: false,
         error: '',
     });
 
-    const { name, description, language, duration, rating, genreId, trailorUrl, image } = state;
+    const { name, description, language, duration, rating, genreId, actorName, directorName, trailorUrl, image } = state;
 
     const [genres, setGenres] = useState([]);
     const isFormValid = () => {
-        return name && description && language && duration && rating && genreId && trailorUrl && image;
+        return name && description && language && duration && rating && genreId && actorName && directorName && trailorUrl && image;
     };
 
     useEffect(() => {
@@ -83,6 +87,8 @@ export default function MovieEditForm(props) {
         formData.append('Duration', duration);
         formData.append('Rating', rating);
         formData.append('GenreId', genreId);
+        formData.append('ActorName', actorName);
+        formData.append('DirectorName', directorName);
         formData.append('TrailorUrl', trailorUrl);
         formData.append('Image', image, image.name);
 
@@ -149,6 +155,8 @@ export default function MovieEditForm(props) {
                             </Select>
                         </Grid> */}
 
+
+
                         <Grid item xs={6} sm={6}>
                             <TextField variant="outlined" margin="normal" required fullWidth id="language" label="Language" type="text" name="language" value={state.language} onChange={handleChange} />
                         </Grid>
@@ -161,9 +169,47 @@ export default function MovieEditForm(props) {
                             <TextField variant="outlined" margin="normal" required fullWidth id="ticketPrice" label="Ticket Price" type="number" name="ticketPrice" value={state.ticketPrice} onChange={handleChange} placeholder="Ex) 12.99" />
                         </Grid> */}
 
-                        <Grid item xs={6} sm={6}>
+                        {/* <Grid item xs={6} sm={6}>
                             <TextField variant="outlined" margin="normal" required fullWidth id="rating" label="Rating" type="number" name="rating" value={state.rating} onChange={handleChange} placeholder="Ex) 8.8" />
+                        </Grid> */}
+
+                    
+                        <Grid item xs={6} sm={6}>
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            select
+                            id="rating"
+                            label="Rating"
+                            name="rating"
+                            value={rating}
+                            onChange={handleChange}
+                            SelectProps={{
+                            native: true,
+                            }}
+                        >
+                            {/* <option value="" disabled>
+                            Select a Rating
+                            </option> */}
+                            <option value="G">G (General Audiences)</option>
+                            <option value="PG">PG (Parental Guidance Suggested)</option>
+                            <option value="PG-13">PG-13 (Parents Strongly Cautioned)</option>
+                            <option value="R">R (Restricted)</option>
+                            <option value="NC-17">NC-17 (Adults Only)</option>
+                        </TextField>
                         </Grid>
+
+                        <Grid item xs={6} sm={6}>
+                            <TextField variant="outlined" margin="normal" required fullWidth id="actorName" label="Actor Name" type="text" name="actorName" value={actorName} onChange={handleChange} />
+
+                        </Grid>
+                        <Grid item xs={6} sm={6}>
+                            <TextField variant="outlined" margin="normal" required fullWidth id="directorName" label="Director Name" type="text" name="directorName" value={directorName} onChange={handleChange} />
+                        </Grid>
+                             
+
 
                         <Grid item xs={12}>
                             <TextField variant="outlined" margin="normal" required fullWidth id="trailorUrl" label="Trailor URL" type="text" name="trailorUrl" value={state.trailorUrl} onChange={handleChange} />

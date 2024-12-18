@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Dialog, DialogActions, DialogContent, DialogTitle, TextField, Button, Grid, MenuItem } from '@material-ui/core';
+import { Dialog, DialogActions, DialogContent, DialogTitle, TextField, Button, Grid, MenuItem, Typography } from '@material-ui/core';
 import axios from 'axios';
 
 export default function AddScheduleForm({ open, handleClose, movieId }) {
@@ -19,6 +19,15 @@ export default function AddScheduleForm({ open, handleClose, movieId }) {
             setTimeslots(response.data);
         });
     }, []);
+
+    const handleTheatre = (val) => {
+        // e.preventDefault();
+        setTheatre(val);
+        // Fetch price for selected theatre using theatres
+        const price = theatres.find((theatre) => theatre.id === val).price;
+        setPrice(price);
+
+    }
 
     const handleSubmit = () => {
         const scheduleData = {
@@ -52,11 +61,11 @@ export default function AddScheduleForm({ open, handleClose, movieId }) {
                             min: new Date().toISOString().split("T")[0]
                         }}/>
                     </Grid>
+                    {/* <Grid item xs={12}>
+                        <TextField fullWidth label="Price" type="number" value={price} onChange={(e) => setPrice(e.target.value)} disabled/>
+                    </Grid> */}
                     <Grid item xs={12}>
-                        <TextField fullWidth label="Price" type="number" value={price} onChange={(e) => setPrice(e.target.value)} />
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField fullWidth select label="Theatre" value={theatre} onChange={(e) => setTheatre(e.target.value)}>
+                        <TextField fullWidth select label="Theatre" value={theatre} onChange={(e) => handleTheatre(e.target.value)}>
                             {theatres.map((theatre) => (
                                 <MenuItem key={theatre.id} value={theatre.id}>
                                     {theatre.name} screen {theatre.screenNumber} at {theatre.location}
@@ -72,6 +81,11 @@ export default function AddScheduleForm({ open, handleClose, movieId }) {
                                 </MenuItem>
                             ))}
                         </TextField>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Typography variant="h6" color="primary">
+                            Price: ${price} 
+                        </Typography>
                     </Grid>
                 </Grid>
             </DialogContent>

@@ -24,6 +24,7 @@ const TheatreList = () => {
         location: '',
         city: '',
         state: '',
+        price: '',
     });
 
     useEffect(() => {
@@ -99,6 +100,7 @@ const TheatreList = () => {
                             <TableCell>Location</TableCell>
                             <TableCell>Screen Number</TableCell>
                             <TableCell>SeatCapacity</TableCell>
+                            <TableCell>Price</TableCell>
                             <TableCell>Actions</TableCell>
                         </TableRow>
                     </TableHead>
@@ -110,6 +112,7 @@ const TheatreList = () => {
                                 <TableCell>{theatre.location}</TableCell>
                                 <TableCell>{theatre.screenNumber}</TableCell>
                                 <TableCell>{theatre.seatCapacity}</TableCell>
+                                <TableCell>{theatre.price}</TableCell>
                                 <TableCell>
                                     <IconButton onClick={() => handleEditClick(theatre)}>
                                         <Edit />
@@ -131,6 +134,7 @@ const TheatreList = () => {
                     <TextField margin="dense" label="Location" type="text" fullWidth value={currentTheatre.location} onChange={(e) => setCurrentTheatre({ ...currentTheatre, location: e.target.value })} />
                     <TextField margin="dense" label="Screen Number" type="number" fullWidth value={currentTheatre.screenNumber} onChange={(e) => setCurrentTheatre({ ...currentTheatre, screenNumber: e.target.value })} />
                     <TextField margin="dense" label="Seat Capacity" type="number" fullWidth value={currentTheatre.seatCapacity} onChange={(e) => setCurrentTheatre({ ...currentTheatre, seatCapacity: e.target.value })} />
+                    <TextField margin="dense" label="Price" type="number" fullWidth value={currentTheatre.price} onChange={(e) => setCurrentTheatre({ ...currentTheatre, price: e.target.value })} />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose} color="primary">

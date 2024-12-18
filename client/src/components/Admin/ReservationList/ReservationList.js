@@ -40,7 +40,13 @@ export default function ReservationList() {
     useEffect(() => {
         if (user.role === 'Admin' || 'User') {
             setLoading(true);
-            API.get(`Bookings/paginated?pageNumber=${pageNumber}&pageSize=${pageSize}&sort=${sortBy}&keyword=${debouncedValue}`)
+            fetchReservations();
+        }
+    }, [setReservations, user.role, pageNumber, pageSize, sortBy, debouncedValue]);
+
+
+    const fetchReservations = () => {
+        API.get(`Bookings/paginated?pageNumber=${pageNumber}&pageSize=${pageSize}&sort=${sortBy}&keyword=${debouncedValue}`)
                 .then((response) => {
                     if (response.status === 200) {
                         setReservations(response.data);
@@ -52,8 +58,8 @@ export default function ReservationList() {
                     setLoading(false);
                     alert(error);
                 });
-        }
-    }, [setReservations, user.role, pageNumber, pageSize, sortBy, debouncedValue]);
+        
+    }
 
     const goToPrevious = () => {
         setPageNumber(Math.max(1, pageNumber - 1));
@@ -88,20 +94,40 @@ export default function ReservationList() {
     //     setReservationId(event.currentTarget.id);
     // };
 
+    const updateBookingStatus =(reservationId,status)=>{
+        API.put(`Bookings/${reservationId}/status`, status, {
+            headers: { "Content-Type": "application/json" },
+        })
+        .then((response) => {
+            if (response.status === 200) {
+                fetchReservations();
+                setSnackbarOpen(true);
+            }
+            setLoading(false);
+        })
+        .catch((error) => {
+            setLoading(false);
+            alert(error.message || "An error occurred");
+        });
+    }
+
+
     const handleCancelReservation = (reservationId) => {
         setLoading(true);
-        API.delete(`Bookings/${reservationId}`)
-            .then((response) => {
-                if (response.status === 204) {
-                    setReservations((prevReservations) => prevReservations.filter((res) => res.id !== reservationId));
-                    setSnackbarOpen(true);
-                }
-                setLoading(false);
-            })
-            .catch((error) => {
-                setLoading(false);
-                alert(error);
-            });
+        updateBookingStatus(reservationId,"INREVIEW");
+
+        // API.delete(`Bookings/${reservationId}`)
+        //     .then((response) => {
+        //         if (response.status === 204) {
+        //             setReservations((prevReservations) => prevReservations.filter((res) => res.id !== reservationId));
+        //             setSnackbarOpen(true);
+        //         }
+        //         setLoading(false);
+        //     })
+        //     .catch((error) => {
+        //         setLoading(false);
+        //         alert(error);
+        //     });
     };
 
     const handleDialogClose = () => {
@@ -238,18 +264,40 @@ export default function ReservationList() {
                                                         <Typography variant="subtitle1"><b>Seat Numbers</b> : {item.seatNumbers}</Typography>
                                                         <Typography variant="subtitle1"><b>Total Price</b> : {item.totalPrice}</Typography>
                                                         <Typography variant="subtitle1"><b>Location</b> : {item.location}</Typography>
+                                                        {/* IF THE USER IS asdmin and refunded the big text asrefunded*/}
+                                                        { (item.status === 'REFUNDED' || item.status === 'INREVIEW' ) && (
+                                                            <Typography variant="subtitle1" color="secondary">
+                                                                {item.status}
+                                                            </Typography>
+                                                        )}
+
+                                                        {/* {user.role === 'User' && item.status === 'REFUNDED' && (
+                                                            <Typography variant="subtitle1" color="secondary">
+                                                                REFUNDED
+                                                            </Typography>
+                                                        )} */}
 
 
                                                         {/* <Button variant="contained" color="primary" onClick={handleDialogOpen} id={item.id}>
                                                             Details
                                                         </Button> */}
                                                         {/* if the booking date is today, then disable cancel button */}
-                                                        {(new Date(item.bookingDate) > new Date()) && (
-                                                            
+                                                        {/* {(new Date(item.bookingDate) > new Date()) && ( */}
+                                                        {user.role === 'User' && item.status === 'ACTIVE' && (
                                                             <Button variant="contained" color="secondary" onClick={() => handleCancelReservation(item.id)}>
                                                                 Cancel
                                                             </Button>
+                                                         )}   
+
+                                                        {/* if user is adming and status is REVIEW then show Approve cancel button */}
+                                                   
+                                                        {user.role === 'Admin' && item.status === 'INREVIEW' && (
+                                                            <Button variant="contained" color="primary" onClick={() => updateBookingStatus(item.id,"REFUNDED")}>
+                                                                Approve Cancel
+                                                            </Button>
                                                         )}
+                                                        
+                                                        
                                                         
                                                         &nbsp;&nbsp;
                                                         <Button variant="contained" color="primary" onClick={() => handlePrint(item.id)}>

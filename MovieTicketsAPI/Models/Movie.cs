@@ -28,10 +28,17 @@ namespace MovieTicketsAPI.Models
         //public double TicketPrice { get; set; }
 
         [BsonElement("rating")]
-        public double Rating { get; set; }
+        public string Rating { get; set; }
 
         [BsonElement("genreId")]
         public string GenreId { get; set; }
+
+        [BsonElement("actorName")]
+        public string ActorName { get; set; }
+
+        [BsonElement("directorName")]
+        public string DirectorName { get; set; }
+
 
         [BsonElement("trailorUrl")]
         public string TrailorUrl { get; set; }

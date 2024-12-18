@@ -17,12 +17,16 @@ namespace MovieTicketsAPI.Controllers
         private readonly ITheatreRepository _theatreRepository;
         private readonly IScheduleRepository _scheduleRepository;
         private readonly ITimeslotRepository _timeslotRepository;
+        private readonly IBookingRepository _bookingRepository;
 
-        public SchedulesController(IScheduleRepository scheduleRepository, ITheatreRepository theatreRepository, ITimeslotRepository timeslotRepository)
+        public SchedulesController(IScheduleRepository scheduleRepository, 
+                ITheatreRepository theatreRepository, ITimeslotRepository timeslotRepository,
+                IBookingRepository bookingRepository)
         {
             _scheduleRepository = scheduleRepository;
             _theatreRepository = theatreRepository;
             _timeslotRepository = timeslotRepository;
+            _bookingRepository = bookingRepository;
         }
 
         // GET: api/Schedules
@@ -85,6 +89,12 @@ namespace MovieTicketsAPI.Controllers
                         return NotFound($"Timeslot with ID {schedule.TimeSlotId} not found.");
                     }
 
+                    var bookings = await _bookingRepository.GetBookingsByScheduleId(schedule.Id);
+                    int seatsBooked = bookings.Sum(b => b.SeatNumbers?.Count ?? 0);
+
+                    int totalSeats = theatre.SeatCapacity;
+                    int seatsAvailable = totalSeats - seatsBooked;
+
                     // Step 3: Construct the response object for each schedule
                     var scheduleDetail = new
                     {
@@ -94,7 +104,9 @@ namespace MovieTicketsAPI.Controllers
                         startTime = timeslot.StartTime,
                         endTime = timeslot.EndTime,
                         screenNumber = theatre.ScreenNumber,
-                        location = theatre.Location
+                        location = theatre.Location,
+                        seatsBooked = seatsBooked,
+                        seatsAvailable = seatsAvailable > 0 ? seatsAvailable : 0
                     };
 
                     scheduleDetails.Add(scheduleDetail);
@@ -123,12 +135,29 @@ namespace MovieTicketsAPI.Controllers
 
             try
             {
+                //var theatre = await _theatreRepository.GetTheatreById(schedule.TheatreId);
+                //if (theatre == null)
+                //{
+                //    return BadRequest("Invalid theatre ID.");
+                //}
+
+                //await _scheduleRepository.CreateSchedule(schedule);
+                //return StatusCode(StatusCodes.Status201Created, schedule);
+
                 var theatre = await _theatreRepository.GetTheatreById(schedule.TheatreId);
                 if (theatre == null)
                 {
                     return BadRequest("Invalid theatre ID.");
                 }
 
+                // Check if a schedule with the same theatre, time slot, and date already exists
+                var existingSchedules = await _scheduleRepository.GetSchedulesByTheatreAndTimeslot(schedule.TheatreId, schedule.TimeSlotId);
+                if (existingSchedules.Any(s => s.Date == schedule.Date))
+                {
+                    return Conflict("A schedule already exists for the specified theatre, time slot, and date.");
+                }
+
+                // Create the schedule if no conflicts are found
                 await _scheduleRepository.CreateSchedule(schedule);
                 return StatusCode(StatusCodes.Status201Created, schedule);
             }

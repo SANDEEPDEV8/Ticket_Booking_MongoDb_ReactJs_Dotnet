@@ -129,7 +129,8 @@ namespace MovieTicketsAPI.Controllers
                         TotalPrice = booking.TotalPrice,
                         BookingDate = booking.BookingDate,
                         SeatNumbers = string.Join(", ", booking.SeatNumbers),
-                        TotalPages = totalPages
+                        TotalPages = totalPages,
+                        Status= booking.Status
                     });
                 }
 
@@ -215,6 +216,7 @@ namespace MovieTicketsAPI.Controllers
                 // Assign allocated seats and calculate total price
                 booking.SeatNumbers = allocatedSeats;
                 booking.TotalPrice = booking.NumberOfSeats * schedule.Price;
+                booking.Status = "ACTIVE";
 
                 await _bookingRepository.CreateBooking(booking);
                 var payment = new Payment
@@ -260,6 +262,34 @@ namespace MovieTicketsAPI.Controllers
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, $"Error updating booking: {ex.Message}");
+            }
+        }
+
+        // create a new api endpoint to update the status of a booking
+        // PUT: api/Bookings/{id}/status
+        [HttpPut("{id}/status")]
+        public async Task<IActionResult> UpdateBookingStatus(string id, [FromBody] string status)
+        {
+            if (string.IsNullOrEmpty(status))
+            {
+                return BadRequest("Invalid status data.");
+            }
+
+            var existingBooking = await _bookingRepository.GetBookingById(id);
+            if (existingBooking == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                existingBooking.Status = status;
+                await _bookingRepository.UpdateBooking(id, existingBooking);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"Error updating booking status: {ex.Message}");
             }
         }
 

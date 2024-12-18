@@ -1,4 +1,5 @@
 ﻿using MovieTicketsAPI.Models;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -9,7 +10,7 @@ namespace MovieTicketsAPI.Repository.IRepository
         Task CreateMovie(Movie movie);
         Task DeleteMovie(string id);
         Task<IEnumerable<Movie>> GetAllMovies();
-        Task<IEnumerable<Movie>> GetAllPaginatedMovies(int pageNumber, int pageSize, string sort, string movieName, string theatreId);
+        Task<IEnumerable<Movie>> GetAllPaginatedMovies(int pageNumber, int pageSize, string sort, string movieName, string theatreId, (DateTime? startDate, DateTime? endDate)? dateRange);
         Task<long> GetCount();
         Task<List<Movie>> GetMoviesByName(string movieName);
         Task<Movie> GetMovie(string id);

@@ -9,6 +9,7 @@ import { movieDetailAtom, userAtom } from '../../atoms/atoms';
 import MovieSubDetails from './Sections/MovieSubDetails';
 import AddScheduleForm from './Sections/AddScheduleForm';
 import MovieBookingForm from './Sections/MovieBookingForm';
+import MoviePaymentForm from './Sections/MoviePaymentForm';
 
 export default function MovieDetails(props) {
     const classes = useStyles();
@@ -17,6 +18,7 @@ export default function MovieDetails(props) {
     const [movieDetail, setMovieDetail] = useRecoilState(movieDetailAtom);
     const [scheduleDetail, setScheduleDetail] = useState({});
     const [snackbarOpen, setSnackbarOpen] = React.useState(false);
+    const [snackbarPaymentOpen, setSnackbarPayemntOpen] = React.useState(false);
 
     const user = useRecoilValue(userAtom);
     const movieId = props.match.params.id;
@@ -24,6 +26,7 @@ export default function MovieDetails(props) {
     const [schedules, setSchedules] = useState([]);
 
     const [openBookDialog, setOpenBookDialog] = useState(false);
+    const [openPaymentDialog, setOpenPaymentDialog] = useState(false);
 
     useEffect(() => {
         if (openScheduleForm) {
@@ -51,8 +54,9 @@ export default function MovieDetails(props) {
     const onBook = (schedule) => {
         console.log(schedule);
         setScheduleDetail(schedule);
-        // setMovieDetail({ ...movieDetail, schedule });
+                 // setMovieDetail({ ...movieDetail, schedule });
         setOpenBookDialog(true);
+        // setOpenPaymentDialog(true);
     };
 
     const handleSnackbarClose = (event, reason) => {
@@ -63,12 +67,35 @@ export default function MovieDetails(props) {
         setSnackbarOpen(false);
     };
 
+    const handlePaymentSnackbarClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setTimeout(() => {
+            setSnackbarPayemntOpen(false);
+        }, 5000);
+        
+        setOpenPaymentDialog(false);
+    };
+
+    const handlePaymentSnackbarOpen = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setSnackbarPayemntOpen(true);
+    };
+
     return (
         <React.Fragment>
             <CssBaseline />
             <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
                 <Alert onClose={handleSnackbarClose} severity="success">
                     Successfully book your ticket!
+                </Alert>
+            </Snackbar>
+            <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} open={snackbarPaymentOpen} autoHideDuration={2} onClose={handlePaymentSnackbarClose}>
+                <Alert onClose={handlePaymentSnackbarClose} severity="success">
+                    Payment Successfull!
                 </Alert>
             </Snackbar>
             <div className={classes.container}>
@@ -98,7 +125,7 @@ export default function MovieDetails(props) {
                             </Grid>
                         </Grid>
                     </Paper>
-                    <MovieSubDetails movieDetail={movieDetail} movieId={movieId} />
+                    <MovieSubDetails movieDetail={movieDetail} movieId={movieId} schedules={schedules} />
                     {user.role === 'Admin' && (
                         <div>
                             <Grid container justifyContent="flex-end">
@@ -138,18 +165,18 @@ export default function MovieDetails(props) {
                                     <TableBody>
                                         {schedules.map((schedule) => (
                                             <TableRow key={schedule.scheduleId}>
-                                                <TableCell>{schedule.date}</TableCell>
+                                                <TableCell>{new Date(schedule.date).toLocaleDateString("en-US")}</TableCell>
                                                 <TableCell>${schedule.price}</TableCell>
                                                 <TableCell>{schedule.startTime}</TableCell>
                                                 <TableCell>{schedule.endTime}</TableCell>
                                                 <TableCell>{schedule.screenNumber}</TableCell>
                                                 <TableCell>{schedule.location}</TableCell>
                                                 <TableCell>
-                                                {user.role === 'Admin' && (
-                                                    <IconButton onClick={() => handleDeleteSchedule(schedule.scheduleId)}>
-                                                        <DeleteIcon color="secondary" />
-                                                    </IconButton>
-                                                )}
+                                                    {/* {user.role === 'Admin' && (
+                                                        <IconButton onClick={() => handleDeleteSchedule(schedule.scheduleId)}>
+                                                            <DeleteIcon color="secondary" />
+                                                        </IconButton>
+                                                    )} */}
                                                     <Button variant="contained" color="primary" style={{ marginLeft: '10px' }} onClick={() => onBook(schedule)}>
                                                         Book
                                                     </Button>
@@ -173,7 +200,15 @@ export default function MovieDetails(props) {
 
                 <Dialog open={openBookDialog} onClose={() => setOpenBookDialog(false)}>
                     <DialogContent>
-                        <MovieBookingForm movieDetail={movieDetail} scheduleDetail={scheduleDetail} movieId={movieId} handleClose={() => setOpenBookDialog(false)} handleSnackbar={handleSnackbarClose} />
+                        <MovieBookingForm movieDetail={movieDetail} scheduleDetail={scheduleDetail} movieId={movieId} 
+                                handleClose={() => {setOpenBookDialog(false); setOpenPaymentDialog(true)}} 
+                                handleSnackbar={handleSnackbarClose} />
+                    </DialogContent>
+                </Dialog>
+
+                <Dialog open={openPaymentDialog} onClose={() => setOpenPaymentDialog(false)}>
+                    <DialogContent>
+                        <MoviePaymentForm handleSnackbarClose={handlePaymentSnackbarClose}   handleSnackbar={handlePaymentSnackbarOpen} />
                     </DialogContent>
                 </Dialog>
             </div>

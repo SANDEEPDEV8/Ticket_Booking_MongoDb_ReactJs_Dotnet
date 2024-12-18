@@ -58,6 +58,13 @@ function Admin() {
                     </Button>
                   </Link>
                 </Grid>
+                <Grid item>
+                  <Link href="/admin/checkin" underline="none">
+                    <Button variant="outlined" color="primary">
+                      Check-In
+                    </Button>
+                  </Link>
+                </Grid>
               </Grid>
             </div>
           </Container>

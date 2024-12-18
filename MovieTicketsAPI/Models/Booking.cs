@@ -28,5 +28,8 @@ namespace MovieTicketsAPI.Models
 
         [BsonElement("bookingDate")]
         public DateTime BookingDate { get; set; }
+
+        [BsonElement("status")]
+        public string Status { get; set; }
     }
 }

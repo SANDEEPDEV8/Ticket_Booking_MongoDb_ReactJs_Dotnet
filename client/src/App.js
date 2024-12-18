@@ -9,6 +9,7 @@ import MovieDetails from "./components/MovieDetails/MovieDetails";
 import ReservationList from "./components/Admin/ReservationList/ReservationList";
 import MovieList from "./components/Admin/MovieList/MovieList";
 import TheatreList from "./components/Admin/TheatreList/TheatreList";
+import Checkin from "./components/Admin/Checkin";
 
 // const theme = createTheme({
 //   palette: {
@@ -45,7 +46,7 @@ function App() {
           <Route exact path="/movies/:id" component={MovieDetails} />
           <Route exact path="/admin/reservations" component={ReservationList} />
           <Route exact path="/admin/movies" component={MovieList} />
-          <Route exact path="/admin/theatres" component={TheatreList} />
+          <Route exact path="/admin/checkin" component={Checkin} />
         </Switch>
       </div>
       <div className="subContainer">
